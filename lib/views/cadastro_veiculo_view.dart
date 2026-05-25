@@ -108,8 +108,9 @@ class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
       }
     }
 
-    if(widget.veiculo == null)
+    if(widget.veiculo == null) {
       await gerarBoletosInicial(clienteSelecionadoId!, veiculosSalvos);
+    }
 
     ScaffoldMessenger.of(
       context,
@@ -230,7 +231,7 @@ class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
                               var clientes = snapshot.data!;
 
                               return DropdownButtonFormField<String>(
-                                value: clienteSelecionadoId,
+                                initialValue: clienteSelecionadoId,
                                 hint: Text('Selecione o cliente'),
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
