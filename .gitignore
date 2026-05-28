@@ -59,7 +59,7 @@ ios/Flutter/Flutter.podspec
 .DS_Store
 
 # Firebase
-google-services.json
+#google-services.json
 GoogleService-Info.plist
 
 # Env

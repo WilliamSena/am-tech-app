@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "455823305375",
+    "project_id": "am-tech-a633a",
+    "storage_bucket": "am-tech-a633a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455823305375:android:373da4b9315539e01c10aa",
+        "android_client_info": {
+          "package_name": "com.example.amtech"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfqTUBt1vf3pv6mT80I5zZv3eay_LFEW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
