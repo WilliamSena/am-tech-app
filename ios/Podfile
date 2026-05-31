@@ -1,6 +1,9 @@
 platform :ios, '15.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+ENV['SWIFT_PACKAGE_MANAGER_DISABLED'] = 'true'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
