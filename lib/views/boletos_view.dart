@@ -153,7 +153,7 @@ class BoletosView extends StatelessWidget {
             children: [
               // ÍCONE
               CircleAvatar(
-                backgroundColor: statusColor.withOpacity(0.1),
+                backgroundColor: statusColor.withValues(alpha: 0.1),
                 child: Icon(Icons.receipt, color: statusColor),
               ),
 

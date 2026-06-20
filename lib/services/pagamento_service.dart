@@ -74,7 +74,7 @@ Future<void> atualizarStatusBoletos(List<ClientePagamento> lista) async {
     } else if (p.dataVencimento.isBefore(hoje) &&
         p.dataPagamentoRealizado == null) {
       novoStatus = 'ATRASADO';
-      
+
       if (p.status != 'ATRASADO') {
         await gerarProximoBoleto(p);
       }

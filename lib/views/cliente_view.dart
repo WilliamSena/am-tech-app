@@ -182,7 +182,7 @@ class _ClientesView extends State<ClientesView> {
         children: [
           // 🔵 ÍCONE
           CircleAvatar(
-            backgroundColor: primaryColor.withOpacity(0.1),
+            backgroundColor: primaryColor.withValues(alpha: 0.1),
             child: Icon(Icons.person, color: primaryColor),
           ),
 

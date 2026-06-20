@@ -1,4 +1,3 @@
-
 import '../models/cliente_pagamento_model.dart';
 import '../services/cliente_pagamento_service.dart';
 
@@ -13,7 +12,7 @@ class ClientePagamentoController {
     return service.listarPorCliente(idCliente);
   }
 
-  Stream<List<ClientePagamento>> listarTodos(){
+  Stream<List<ClientePagamento>> listarTodos() {
     return service.listarTodos();
   }
 
@@ -36,5 +35,15 @@ class ClientePagamentoController {
     );
 
     await controller.criar(novo);
+  }
+
+  Future<String> atualizarDiaPagamentoBoleto(
+    String idCliente,
+    String novoDiaPagamento,
+  ) async {
+    return service.atualizarDiaPagamentoBoletoAberto(
+      idCliente: idCliente,
+      novoDiaPagamento: novoDiaPagamento,
+    );
   }
 }

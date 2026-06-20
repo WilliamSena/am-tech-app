@@ -52,6 +52,7 @@ android {
             dimension = "default"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            resValue("string", "app_name", "AM Tech Dev")
         }
 
         create("prod") {

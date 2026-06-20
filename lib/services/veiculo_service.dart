@@ -33,9 +33,9 @@ class VeiculoService {
     );
   }
 
-  Stream<List<Veiculo>> listarTodos(){
-    return _collection.snapshots().map((snapshot){
-      return snapshot.docs.map((doc){
+  Stream<List<Veiculo>> listarTodos() {
+    return _collection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
         return Veiculo.fromMap(doc.data(), doc.id);
       }).toList();
     });
@@ -55,6 +55,17 @@ class VeiculoService {
     return lista;
   }
 
+  Future<String> buscarValor(String id) async {
+    final doc = await _collection.doc(id).get();
+
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      return data['valor']?.toString() ?? '';
+    }
+
+    return '';
+  }
+
   Future<void> atualizar(Veiculo v) async {
     await _collection.doc(v.id).update({
       'tipo': v.tipo,
@@ -62,6 +73,9 @@ class VeiculoService {
       'modelo': v.modelo,
       'placa': v.placa,
       'status': v.status,
+      'diaPagamento': v.diaPagamento,
+      'cor': v.cor,
+      'valor': v.valor,
     });
   }
 

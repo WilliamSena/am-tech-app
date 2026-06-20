@@ -297,8 +297,8 @@ class _ResumoView extends State<ResumoView> {
 
   Route criarRota(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, __, ___) => page,
-      transitionsBuilder: (_, animation, __, child) {
+      pageBuilder: (_, _, _) => page,
+      transitionsBuilder: (_, animation, _, child) {
         final tween = Tween(
           begin: Offset(1, 0), // direita → esquerda
           end: Offset.zero,

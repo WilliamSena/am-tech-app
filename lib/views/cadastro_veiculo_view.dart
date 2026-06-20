@@ -1,4 +1,5 @@
 import 'package:am_tech/controllers/cliente_controller.dart';
+import 'package:am_tech/controllers/cliente_pagamento_controller.dart';
 import 'package:am_tech/models/cliente_model.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_spacing.dart';
@@ -24,6 +25,7 @@ class CadastroVeiculoView extends StatefulWidget {
 
 class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
   final controller = VeiculoController();
+  final controllerClientePagamento = ClientePagamentoController();
   final _formKey = GlobalKey<FormState>();
 
   final Color primaryColor = Color(0xFF1E88E5);
@@ -80,6 +82,7 @@ class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
     }
 
     List<Veiculo> veiculosSalvos = [];
+    String msg = "";
 
     for (var v in veiculos) {
       var veiculo = Veiculo(
@@ -102,19 +105,37 @@ class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
 
         veiculo.id = idGerado;
         veiculosSalvos.add(veiculo);
+
+        msg = 'Veículos salvos com sucesso! Maldição';
       } else {
         // 🔵 EDITAR
-        await controller.atualizar(veiculo);
+        // guarda o dia antigo antes de atualizar
+        //String diaPagamentoAntigo = widget.veiculo?.diaPagamento ?? '';
+
+        // atualiza o cadastro do veículo
+        clienteSelecionadoId = veiculo.idCliente;
+        msg = await controller.atualizar(veiculo);
+
+        // verifica se o dia do pagamento mudou
+        /*print('ID VEICULO: ${v.id}');
+        print('Dia ant: $diaPagamentoAntigo \nDia nov: ');
+        if (diaPagamentoAntigo != v.diaPagamento.text) {
+          // atualiza o boleto em aberto do cliente
+          await controllerClientePagamento.atualizarDiaPagamentoBoleto(
+            clienteSelecionadoId!,
+            v.diaPagamento.text
+          );
+        }*/
       }
     }
 
-    if(widget.veiculo == null) {
+    if (widget.veiculo == null) {
       await gerarBoletosInicial(clienteSelecionadoId!, veiculosSalvos);
     }
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('Veículos salvos com sucesso!')));
+    ).showSnackBar(SnackBar(content: Text(msg)));
 
     Navigator.pop(context);
   }
@@ -353,7 +374,11 @@ class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
                               backgroundColor: secondaryColor,
                               foregroundColor: Colors.white,
                             ),
-                            child: Text(widget.veiculo != null ? 'Atualizar' : 'Salvar todos'),
+                            child: Text(
+                              widget.veiculo != null
+                                  ? 'Atualizar'
+                                  : 'Salvar todos',
+                            ),
                           ),
                         ),
                       ],

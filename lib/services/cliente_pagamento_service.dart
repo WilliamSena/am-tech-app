@@ -1,4 +1,5 @@
 import 'package:am_tech/models/cliente_pagamento_model.dart';
+import 'package:am_tech/services/veiculo_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ClientePagamentoService {
@@ -54,5 +55,55 @@ class ClientePagamentoService {
     }
 
     return false;
+  }
+
+  Future<String> atualizarDiaPagamentoBoletoAberto({
+    required String idCliente,
+    required String novoDiaPagamento,
+  }) async {
+    try {
+      final boletos = await _ref
+          .where('idCliente', isEqualTo: idCliente)
+          .where('status', isEqualTo: 'PENDENTE')
+          .get();
+
+      if (boletos.docs.isEmpty) {
+        return 'Nenhum boleto encontrado';
+      }
+
+      int atualizados = 0;
+
+      for (var doc in boletos.docs) {
+        final dados = doc.data();
+        final DateTime dataAtual = (dados['dataVencimento'] as Timestamp)
+            .toDate();
+
+        final novaData = DateTime(
+          dataAtual.year,
+          dataAtual.month,
+          int.parse(novoDiaPagamento),
+        );
+
+        final veiculos = dados['idsVeiculos'];
+        double total = 0;
+        final veiculoService = VeiculoService();
+
+        for (String id in veiculos) {
+          final valor = await veiculoService.buscarValor(id);
+          total += double.tryParse(valor) ?? 0;
+        }
+
+        await doc.reference.update({
+          'dataVencimento': Timestamp.fromDate(novaData),
+          'valorPagar': total,
+        });
+
+        atualizados++;
+      }
+
+      return 'Dados atualizados com sucesso!';
+    } catch (e) {
+      return 'ERRO: $e';
+    }
   }
 }

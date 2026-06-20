@@ -30,6 +30,9 @@ class _TelaInicialView extends State<TelaInicialView> {
   final Color secondaryColor = Color(0xFF3482F7);
   final Color bgColor = Color(0xFFF5F7FA);
 
+  final ScrollController _scrollController = ScrollController();
+  bool mostrarBotaoTopo = false;
+
   DateTime mesSelecionado = DateTime.now(); // 🔥 AQUI
   bool isMesmoMes(DateTime data) {
     return data.month == mesSelecionado.month &&
@@ -37,15 +40,72 @@ class _TelaInicialView extends State<TelaInicialView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      if (_scrollController.offset > 300 && !mostrarBotaoTopo) {
+        setState(() {
+          mostrarBotaoTopo = true;
+        });
+      } else if (_scrollController.offset <= 300 && mostrarBotaoTopo) {
+        setState(() {
+          mostrarBotaoTopo = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
       drawer: drawerCustom(),
+      floatingActionButton: mostrarBotaoTopo
+          ? /*FloatingActionButton.extended(
+              onPressed: () {},
+              icon: Icon(Icons.arrow_upward),
+              label: Text("Topo"),
+            )*/
+          FloatingActionButton(
+              backgroundColor: secondaryColor,
+              onPressed: () {
+                _scrollController.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                );
+              },
+              child: Icon(Icons.keyboard_arrow_up),
+            )
+          : null,
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             headerTop(context),
 
+            /*
+            Expanded dentro de SingleChildScrollView costuma gerar comportamento estranho / layout inconsistente.
+
+              Ideal seria remover:
+
+              Expanded(child: dashboardResumoClientes(context))
+              Expanded(child: dashboardResumoSaldo(context))
+
+              E usar só:
+
+              dashboardResumoClientes(context),
+              dashboardResumoSaldo(context),
+
+              Isso pode inclusive estar afetando scroll.
+             */
             Expanded(child: (dashboardResumoClientes(context))),
 
             Expanded(child: (dashboardResumoSaldo(context))),
@@ -55,7 +115,6 @@ class _TelaInicialView extends State<TelaInicialView> {
               offset: Offset(0, AppSpacing.large(context)),
               child: Column(
                 children: [
-
                   filtroMes(),
 
                   SizedBox(height: AppSpacing.large(context)),
@@ -506,7 +565,10 @@ class _TelaInicialView extends State<TelaInicialView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Text("Saldo do mês", style: TextStyle(color: Colors.white, fontSize: 16)),
+            child: Text(
+              "Saldo do mês",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
           ),
           SizedBox(height: AppSpacing.small(context)),
           Row(
@@ -807,7 +869,7 @@ class _TelaInicialView extends State<TelaInicialView> {
             Container(
               padding: EdgeInsets.all(AppSpacing.small(context)),
               decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
+                color: primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: primaryColor, size: width * 0.06),
@@ -1082,7 +1144,8 @@ class _TelaInicialView extends State<TelaInicialView> {
                 return FutureBuilder<Cliente?>(
                   future: ClienteController().buscarPorId(p.idCliente),
                   builder: (context, snapCliente) {
-                    String nome = snapCliente.data?.nome ?? '...';
+                    //String nome = snapCliente.data?.nome ?? '...';
+                    final cliente = snapCliente.data;
 
                     Color statusColor;
 
@@ -1100,13 +1163,15 @@ class _TelaInicialView extends State<TelaInicialView> {
                     }
 
                     return GestureDetector(
-                      onTap: () {
+                      onTap: cliente == null
+                      ? null
+                      : () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => ClientePagamentoDetalheView(
                               pagamento: p,
-                              nomeCliente: nome,
+                              cliente: cliente,
                             ),
                           ),
                         );
@@ -1135,7 +1200,7 @@ class _TelaInicialView extends State<TelaInicialView> {
                             Container(
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: primaryColor.withOpacity(0.1),
+                                color: primaryColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Icon(
@@ -1152,7 +1217,7 @@ class _TelaInicialView extends State<TelaInicialView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    nome,
+                                    snapCliente.data?.nome ?? '...',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -1187,7 +1252,7 @@ class _TelaInicialView extends State<TelaInicialView> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: statusColor.withOpacity(0.1),
+                                color: statusColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: Text(
@@ -1313,8 +1378,8 @@ class _TelaInicialView extends State<TelaInicialView> {
 */
   Route criarRota(Widget page) {
     return PageRouteBuilder(
-      pageBuilder: (_, __, ___) => page,
-      transitionsBuilder: (_, animation, __, child) {
+      pageBuilder: (_, _, _) => page,
+      transitionsBuilder: (_, animation, _, child) {
         final tween = Tween(
           begin: Offset(1, 0), // direita → esquerda
           end: Offset.zero,
@@ -1389,8 +1454,8 @@ class _TelaInicialView extends State<TelaInicialView> {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        splashColor: primaryColor.withOpacity(0.2),
-        highlightColor: primaryColor.withOpacity(0.1),
+        splashColor: primaryColor.withValues(alpha: 0.2),
+        highlightColor: primaryColor.withValues(alpha: 0.1),
         child: AnimatedContainer(
           duration: Duration(milliseconds: 120),
           curve: Curves.easeInOut,
