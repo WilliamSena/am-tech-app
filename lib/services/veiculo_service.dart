@@ -33,6 +33,14 @@ class VeiculoService {
     );
   }
 
+  Future<List<Veiculo>> listarPorClienteFuture(String clienteId) async {
+    final snapshot = await _collection
+        .where('idCliente', isEqualTo: clienteId)
+        .get();
+
+    return snapshot.docs.map((e) => Veiculo.fromMap(e.data() as Map<String, dynamic>, e.id)).toList();
+  }
+
   Stream<List<Veiculo>> listarTodos() {
     return _collection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
@@ -81,5 +89,16 @@ class VeiculoService {
 
   Future<void> excluir(String id) async {
     await _collection.doc(id).update({'status': false});
+  }
+
+  Future<String> retornarIdCliente(String id) async {
+    final doc = await _collection.doc(id).get();
+
+    if(doc.exists){
+      final data = doc.data() as Map<String, dynamic>;
+      return data['idCliente']?.toString() ?? '';
+    }
+
+    return '';
   }
 }

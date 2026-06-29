@@ -1,3 +1,4 @@
+import 'package:am_tech/controllers/veiculo_controller.dart';
 import 'package:am_tech/models/cliente_pagamento_model.dart';
 import 'package:am_tech/services/veiculo_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -55,6 +56,32 @@ class ClientePagamentoService {
     }
 
     return false;
+  }
+
+  Future<void> atualizarVeiculoExcluidoBoletoAberto({required String idCliente}) async{
+    try {
+      final boletos = await _ref
+          .where('idCliente', isEqualTo: idCliente)
+          .where('status', isEqualTo: 'PENDENTE')
+          .get();
+
+      if (boletos.docs.isEmpty) {
+        //return 'Nenhum boleto encontrado';
+      }
+
+      double valor = await VeiculoController().atualizarValorPorVeiculoAtivo(idCliente);
+
+      for (var doc in boletos.docs) {
+        final dados = doc.data();
+
+        await doc.reference.update({
+          'valorPagar': valor,
+        });
+      }
+
+    } catch (e) {
+      
+    }
   }
 
   Future<String> atualizarDiaPagamentoBoletoAberto({

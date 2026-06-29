@@ -23,8 +23,23 @@ class VeiculoController {
     return msg;
   }
 
+  Future<double> atualizarValorPorVeiculoAtivo(String idCliente) async{
+    List<Veiculo> veiculos = await _service.listarPorClienteFuture(idCliente);
+    double valor = 0;
+
+    for(var v in veiculos){
+      if(v.status){
+        valor += double.tryParse(v.valor) ?? 0;
+      }
+    }
+
+    return valor;
+  }
+
   Future<void> excluir(String id) async {
+    String idCliente = await _service.retornarIdCliente(id);
     await _service.excluir(id);
+    controllerClientePagamento.atualizarVeiculoExcluidoBoletoAberto(idCliente);
   }
 
   Stream<List<Veiculo>> listarPorCliente(String clienteId) {

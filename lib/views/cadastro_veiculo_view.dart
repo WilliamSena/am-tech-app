@@ -106,7 +106,7 @@ class _CadastroVeiculoViewState extends State<CadastroVeiculoView> {
         veiculo.id = idGerado;
         veiculosSalvos.add(veiculo);
 
-        msg = 'Veículos salvos com sucesso! Maldição';
+        msg = 'Veículos salvos com sucesso!';
       } else {
         // 🔵 EDITAR
         // guarda o dia antigo antes de atualizar

@@ -1,3 +1,5 @@
+import 'package:am_tech/controllers/veiculo_controller.dart';
+
 import '../models/cliente_pagamento_model.dart';
 import '../services/cliente_pagamento_service.dart';
 
@@ -18,6 +20,7 @@ class ClientePagamentoController {
 
   Future<void> gerarProximo(ClientePagamento atual) async {
     final controller = ClientePagamentoController();
+    double valor = await VeiculoController().atualizarValorPorVeiculoAtivo(atual.idCliente);
 
     DateTime novoVencimento = DateTime(
       atual.dataVencimento.year,
@@ -29,7 +32,7 @@ class ClientePagamentoController {
       idCliente: atual.idCliente,
       idsVeiculos: atual.idsVeiculos,
       dataVencimento: novoVencimento,
-      valorPagar: atual.valorPagar,
+      valorPagar: valor,
       valorRecebido: 0,
       status: 'PENDENTE',
     );
@@ -46,4 +49,7 @@ class ClientePagamentoController {
       novoDiaPagamento: novoDiaPagamento,
     );
   }
-}
+
+  Future<void> atualizarVeiculoExcluidoBoletoAberto( String idCliente) async{
+    service.atualizarVeiculoExcluidoBoletoAberto(idCliente: idCliente);
+ }}

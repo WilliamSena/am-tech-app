@@ -72,8 +72,7 @@ class _TelaInicialView extends State<TelaInicialView> {
               onPressed: () {},
               icon: Icon(Icons.arrow_upward),
               label: Text("Topo"),
-            )*/
-          FloatingActionButton(
+            )*/ FloatingActionButton(
               backgroundColor: secondaryColor,
               onPressed: () {
                 _scrollController.animateTo(
@@ -556,40 +555,62 @@ class _TelaInicialView extends State<TelaInicialView> {
     double lucro,
   ) {
     return Container(
-      padding: EdgeInsets.all(AppSpacing.small(context)),
+      width: double.infinity,
+      padding: EdgeInsets.all(AppSpacing.medium(context)),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [primaryColor, secondaryColor]),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text(
-              "Saldo do mês",
-              style: TextStyle(color: Colors.white, fontSize: 16),
+          Text(
+            "Saldo do mês",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: MediaQuery.of(context).size.width * 0.042,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: AppSpacing.small(context)),
+
+          SizedBox(height: AppSpacing.medium(context)),
+
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              itemResumo(
-                "Receitas",
-                receita,
-                Icons.arrow_downward,
-                Colors.greenAccent,
+              Expanded(
+                child: itemResumo(
+                  context,
+                  "Receitas",
+                  receita,
+                  Icons.arrow_downward,
+                  Colors.greenAccent,
+                ),
               ),
-              itemResumo(
-                "Despesas",
-                despesa,
-                Icons.arrow_upward,
-                Colors.redAccent,
+
+              SizedBox(width: 8),
+
+              Expanded(
+                child: itemResumo(
+                  context,
+                  "Despesas",
+                  despesa,
+                  Icons.arrow_upward,
+                  Colors.redAccent,
+                ),
               ),
-              itemResumo("Lucro", lucro, Icons.money, Colors.greenAccent),
+
+              SizedBox(width: 8),
+
+              Expanded(
+                child: itemResumo(
+                  context,
+                  "Lucro",
+                  lucro,
+                  Icons.attach_money,
+                  Colors.greenAccent,
+                ),
+              ),
             ],
           ),
-          SizedBox(height: AppSpacing.small(context)),
         ],
       ),
     );
@@ -639,35 +660,64 @@ class _TelaInicialView extends State<TelaInicialView> {
     );
   }
 
-  Widget itemResumo(String titulo, double valor, IconData icon, Color cor) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white24,
-            borderRadius: BorderRadius.circular(12),
+  Widget itemResumo(
+    BuildContext context,
+    String titulo,
+    double valor,
+    IconData icon,
+    Color cor,
+  ) {
+    double width = MediaQuery.of(context).size.width;
+
+    double iconSize = width < 360 ? 14 : 18;
+    double titleSize = width < 360 ? 12 : 14;
+    double valueSize = width < 360 ? 11 : 14;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: cor, size: iconSize),
+              SizedBox(width: 4),
+
+              Expanded(
+                child: Text(
+                  titulo,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: titleSize,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
-          child: Icon(icon, color: cor),
-        ),
 
-        SizedBox(width: 10),
+          SizedBox(height: 8),
 
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(titulo, style: TextStyle(color: Colors.white70, fontSize: 12)),
-
-            Text(
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
               "R\$ ${valor.toStringAsFixed(2)}",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontSize: valueSize,
               ),
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -1164,18 +1214,18 @@ class _TelaInicialView extends State<TelaInicialView> {
 
                     return GestureDetector(
                       onTap: cliente == null
-                      ? null
-                      : () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ClientePagamentoDetalheView(
-                              pagamento: p,
-                              cliente: cliente,
-                            ),
-                          ),
-                        );
-                      },
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ClientePagamentoDetalheView(
+                                    pagamento: p,
+                                    cliente: cliente,
+                                  ),
+                                ),
+                              );
+                            },
 
                       child: Container(
                         margin: EdgeInsets.only(

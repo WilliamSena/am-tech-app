@@ -1,3 +1,4 @@
+import 'package:am_tech/controllers/veiculo_controller.dart';
 import 'package:am_tech/services/cliente_pagamento_service.dart';
 
 import '../controllers/cliente_pagamento_controller.dart';
@@ -92,6 +93,7 @@ Future<void> atualizarStatusBoletos(List<ClientePagamento> lista) async {
 Future<void> gerarProximoBoleto(ClientePagamento atual) async {
   final controller = ClientePagamentoController();
   final service = ClientePagamentoService();
+  double valor = await VeiculoController().atualizarValorPorVeiculoAtivo(atual.idCliente);
 
   // 🔥 próximo mês
   DateTime proximoVencimento = DateTime(
@@ -116,7 +118,7 @@ Future<void> gerarProximoBoleto(ClientePagamento atual) async {
     idCliente: atual.idCliente,
     idsVeiculos: atual.idsVeiculos,
     dataVencimento: proximoVencimento,
-    valorPagar: atual.valorPagar,
+    valorPagar: valor,
     valorRecebido: 0,
     status: 'PENDENTE',
   );
